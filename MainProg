@@ -1,0 +1,28 @@
+using System;
+
+namespace Lab5
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            var x = new BigInteger("55555");
+            Console.WriteLine($"Example of BigInteger x: {x}");
+            var e = new BigInteger("66");
+            Console.WriteLine($"Example of BigInteger e: {e}");
+            var y = new BigInteger("-13132342449825");
+            /* Tests
+            Console.WriteLine($"Example of BigInteger: {y}");
+            Console.WriteLine($"Reversed BigInteger: {x.ReverseBigInt()}");
+            Console.WriteLine($"Sum of x and e: {x.Add(e)}");
+            Console.WriteLine($"Sub of 33390 and 30: {new BigInteger("33390").Sub(new BigInteger("30"))}");
+            Console.WriteLine($"Add of 888 and 133: {new BigInteger("555").Add(new BigInteger("555"))}");
+            Console.WriteLine($"Sum of 999 and 0: {new BigInteger("999").Add(new BigInteger("0"))}");
+            Console.WriteLine($"Sum of 0 and 9: {new BigInteger("0").Add(new BigInteger("9"))}");
+            Console.WriteLine($"Sub of x and e: {x.Sub(e)}");
+            Console.WriteLine($"Multiply of x and e: {x.Multiply(e)}");
+            Console.WriteLine($"Sum of 0 and 9: {new BigInteger("0").Add(new BigInteger("9"))}");
+            */
+        }
+    }
+}
