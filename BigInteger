@@ -1,0 +1,308 @@
+using System;
+
+namespace Lab5
+{
+    public class BigInteger
+    {
+        public int[] _numbers;
+
+        private bool _is_negative;
+
+        public BigInteger(string value)
+        {
+            if (value == "")
+            {
+                throw new Exception("Your string is empty");
+            }
+
+            if (value[0] == '-')
+            {
+                _is_negative = true;
+                //value = value.Replace('-', ' ');
+            }
+
+            char[] characters = value.ToCharArray();
+
+
+            int indexToStartFrom;
+            if (_is_negative)
+            {
+                indexToStartFrom = 1;
+                _numbers = new int[characters.Length - 1];
+            }
+            else
+            {
+                indexToStartFrom = 0;
+                _numbers = new int[characters.Length];
+            }
+
+            for (int i = indexToStartFrom; i < characters.Length; i++)
+            {
+                _numbers[i - indexToStartFrom] = int.Parse(characters[i].ToString());
+            }
+        }
+
+        public override string ToString()
+        {
+            string _numbersString = "";
+            if (_is_negative)
+            {
+                _numbersString += "-";
+            }
+
+            foreach (var t in _numbers)
+            {
+                _numbersString += Convert.ToString(t);
+            }
+
+            return _numbersString;
+        }
+
+        public BigInteger ReverseBigInt()
+        {
+            string reversedInt = "";
+            for (int i = _numbers.Length - 1; i >= 0; i--)
+            {
+                reversedInt += _numbers[i].ToString();
+            }
+
+            return new BigInteger(reversedInt);
+        }
+
+        public BigInteger Add(BigInteger another)
+        {
+            // return new BigInteger, result of current + another
+            BigInteger maxLengthReversed;
+            BigInteger minLengthReversed;
+            string sumReturn = "";
+            int indexOfLongestWord = 0;
+            int remember = 0;
+            if (_numbers.Length >= another._numbers.Length)
+            {
+                maxLengthReversed = ReverseBigInt();
+                minLengthReversed = another.ReverseBigInt();
+            }
+            else
+            {
+                maxLengthReversed = another.ReverseBigInt();
+                minLengthReversed = ReverseBigInt();
+            }
+
+            /**/
+            for (int i = 0; i < minLengthReversed._numbers.Length; i++)
+            {
+                int sumOfNums = maxLengthReversed._numbers[i] + minLengthReversed._numbers[i] + remember;
+
+                if (sumOfNums > 10)
+                {
+                    sumReturn += sumOfNums.ToString()[1];
+                    remember = 1;
+                }
+
+                if (sumOfNums == 10)
+                {
+                    sumReturn += "0";
+                    remember = 1;
+                }
+
+                if (sumOfNums < 10)
+                {
+                    sumReturn += sumOfNums.ToString();
+                    remember = 0;
+                }
+
+                if (i == minLengthReversed._numbers.Length - 1 && remember == 1)
+                {
+                    sumReturn += remember.ToString();
+                }
+
+                indexOfLongestWord = i + 1;
+            }
+
+            for (int i = indexOfLongestWord; i < maxLengthReversed._numbers.Length; i++)
+            {
+                if (remember == 1)
+                {
+                    if (maxLengthReversed._numbers[i] + remember >= 10)
+                    {
+                        sumReturn += (maxLengthReversed._numbers[i] + remember).ToString()[1];
+                        sumReturn += (maxLengthReversed._numbers[i] + remember).ToString()[0];
+                    }
+                    else
+                    {
+                        sumReturn += (maxLengthReversed._numbers[i] + remember).ToString();
+                    }
+                }
+                else
+                {
+                    sumReturn += maxLengthReversed._numbers[i].ToString();
+                }
+            }
+
+            BigInteger sum = new BigInteger(sumReturn);
+            return sum.ReverseBigInt();
+        }
+
+        public BigInteger Sub(BigInteger another)
+        {
+            // return new BigInteger, result of current - another
+            BigInteger maxLengthReversed;
+            BigInteger minLengthReversed;
+            string subReturn = "";
+            int indexOfLongestWord = 0;
+            int remember = 0;
+            if (_numbers.Length >= another._numbers.Length)
+            {
+                maxLengthReversed = ReverseBigInt();
+                minLengthReversed = another.ReverseBigInt();
+            }
+            else
+            {
+                maxLengthReversed = another.ReverseBigInt();
+                minLengthReversed = ReverseBigInt();
+            }
+
+            for (int i = 0; i < minLengthReversed._numbers.Length; i++)
+            {
+                int subOfNums = maxLengthReversed._numbers[i] - minLengthReversed._numbers[i];
+                if (subOfNums < 0)
+                {
+                    if (maxLengthReversed._numbers[i + 1] == 0)
+                    {
+                        int newIndex = i;
+                        while (maxLengthReversed._numbers[newIndex + 1] == 0)
+                        {
+                            maxLengthReversed._numbers[newIndex + 1] = 9;
+                            newIndex += 1;
+                        }
+                        remember = 1;
+                    }
+                    else
+                    {
+                        maxLengthReversed._numbers[i + 1] -= 1;
+                    }
+
+                    int subIncreased = maxLengthReversed._numbers[i] + 10 - minLengthReversed._numbers[i];
+                    subReturn += subIncreased.ToString();
+                }
+
+                else
+                {
+                    remember = 0;
+                    subReturn += subOfNums.ToString();
+                }
+                
+                indexOfLongestWord += 1;
+            }
+
+            for (int i = indexOfLongestWord; i < maxLengthReversed._numbers.Length; i++)
+            {
+                if (i == maxLengthReversed._numbers.Length - 1 && remember == 1)
+                {
+                    int lastElement = maxLengthReversed._numbers[i] - 1;
+                    if (lastElement != 0)
+                    {
+                        subReturn += lastElement.ToString();
+                    }
+                }
+                else
+                {
+                    subReturn += maxLengthReversed._numbers[i].ToString();
+                }
+            }
+
+            BigInteger sub = new BigInteger(subReturn);
+            return sub.ReverseBigInt();
+        }
+
+        public BigInteger Multiply(BigInteger another)
+        {
+            BigInteger maxLength;
+            BigInteger minLength;
+            string multiplyReturn = "";
+            if (_numbers.Length >= another._numbers.Length)
+            {
+                maxLength = this;
+                minLength = another;
+            }
+            else
+            {
+                maxLength = another;
+                minLength = this;
+            }
+
+            if (maxLength._numbers.Length < 5 && minLength._numbers.Length < 5)
+            {
+                string maxLengthStr = "";
+                string minLengthStr = "";
+                foreach (var number in maxLength._numbers)
+                {
+                    maxLengthStr += number.ToString();
+                }
+
+                foreach (var number in minLength._numbers)
+                {
+                    minLengthStr += number.ToString();
+                }
+
+                return new BigInteger((Convert.ToInt32(maxLengthStr) * Convert.ToInt32(minLengthStr)).ToString());
+            }
+
+            int halfLen = minLength._numbers.Length / 2;
+            string firstPartCurrent = "";
+            for (int i = 0; i <= maxLength._numbers.Length - halfLen - 1; i++)
+            {
+                firstPartCurrent += maxLength._numbers[i].ToString();
+            }
+
+            BigInteger firstPartCurrentBI = new BigInteger(firstPartCurrent);
+
+            string secondPartCurrent = "";
+            for (int i = maxLength._numbers.Length - halfLen; i < maxLength._numbers.Length; i++)
+            {
+                secondPartCurrent += maxLength._numbers[i].ToString();
+            }
+
+            string firstPartAnother = "";
+            for (int i = 0; i < minLength._numbers.Length - halfLen; i++)
+            {
+                firstPartAnother += minLength._numbers[i].ToString();
+            }
+
+            BigInteger firstPartAnotherBI = new BigInteger(firstPartAnother);
+
+            string secondPartAnother = "";
+            for (int i = minLength._numbers.Length - halfLen; i < minLength._numbers.Length; i++)
+            {
+                secondPartAnother += minLength._numbers[i].ToString();
+            }
+
+            BigInteger firstPartCurrentFirstPartAnother = firstPartCurrentBI.Multiply(firstPartAnotherBI);
+            BigInteger secondPartCurrentSecondPartAnother =
+                new BigInteger(secondPartCurrent).Multiply(new BigInteger(secondPartAnother));
+            BigInteger BigOfPartsCurrent =
+                new BigInteger((Convert.ToInt32(firstPartCurrent) + Convert.ToInt32(secondPartCurrent)).ToString());
+            BigInteger BigOfPartsAnother =
+                new BigInteger((Convert.ToInt32(firstPartAnother) + Convert.ToInt32(secondPartAnother)).ToString());
+            BigInteger currentPlusAnother = BigOfPartsCurrent.Multiply(BigOfPartsAnother)
+                .Sub(firstPartCurrentFirstPartAnother).Sub(secondPartCurrentSecondPartAnother);
+            string zeroes = "";
+            for (int i = 0; i < 2 * halfLen; i++)
+            {
+                zeroes += "0";
+            }
+
+            BigInteger fInteger = new BigInteger(firstPartCurrentFirstPartAnother + zeroes);
+            zeroes = "";
+            for (int i = 0; i < halfLen; i++)
+            {
+                zeroes += "0";
+            }
+            currentPlusAnother = new BigInteger(currentPlusAnother + zeroes);
+            BigInteger sInteger = currentPlusAnother;
+            BigInteger multiplied = fInteger.Add(sInteger).Add(secondPartCurrentSecondPartAnother);
+            return multiplied;
+        }
+    }
+}
+
